@@ -2,8 +2,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Bot, Upload, Target, Zap, CheckCircle, ArrowRight, Menu, Moon, Sun, Star, FileText, Search, Send } from 'lucide-react'
-import { Link, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { useTheme } from "@/components/theme-provider"
+import { useCallback, useRef } from "react"
 
 const Image = (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
     <img {...props} />
@@ -13,6 +14,10 @@ export default function Landing() {
 
   const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
+  
+  const featuresRef = useRef<HTMLElement | null>(null);
+  const howItWorksRef = useRef<HTMLElement | null>(null);
+  const testimonialsRef = useRef<HTMLElement | null>(null);
 
   function handleThemeToggle() {
     setTheme(theme === "dark" ? "light" : "dark");
@@ -25,6 +30,10 @@ export default function Landing() {
   const handleSignUpClick = () => {
     navigate('/signup');
   };
+
+  const scrollToSection = useCallback((ref: React.RefObject<HTMLElement | null>) => {
+    ref.current?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -39,18 +48,24 @@ export default function Landing() {
           </div>
 
           <nav className="hidden md:flex items-center space-x-6">
-            <Link to="#features" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+            <button 
+              onClick={() => scrollToSection(featuresRef)}
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer bg-transparent border-none p-0"
+            >
               Features
-            </Link>
-            <Link to="#how-it-works" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+            </button>
+            <button 
+              onClick={() => scrollToSection(howItWorksRef)}
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer bg-transparent border-none p-0"
+            >
               How It Works
-            </Link>
-            <Link to="#testimonials" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+            </button>
+            <button 
+              onClick={() => scrollToSection(testimonialsRef)}
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer bg-transparent border-none p-0"
+            >
               Success Stories
-            </Link>
-            <Link to="#pricing" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-              Pricing
-            </Link>
+            </button>
           </nav>
 
           <div className="flex items-center space-x-4">
@@ -161,7 +176,7 @@ export default function Landing() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 bg-muted/50">
+      <section ref={featuresRef} id="features" className="py-20 bg-muted/50">
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-2">
@@ -239,7 +254,7 @@ export default function Landing() {
       </section>
 
       {/* How It Works Section */}
-      <section id="how-it-works" className="py-20">
+      <section ref={howItWorksRef} id="how-it-works" className="py-20">
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-2">
@@ -329,7 +344,7 @@ export default function Landing() {
       </section>
 
       {/* Testimonials Section */}
-      <section id="testimonials" className="py-20">
+      <section ref={testimonialsRef} id="testimonials" className="py-20">
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-2">
