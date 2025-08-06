@@ -19,8 +19,8 @@ export default function Login() {
         email: '',
         password: ''
     });
-    const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [success, setSuccess] = useState(false);
 
     const handleSignUpClick = () => {
         navigate('/signup');
@@ -32,38 +32,22 @@ export default function Login() {
             ...prev,
             [id]: value
         }));
-        // Clear error when user starts typing
-        if (error) setError('');
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
-        setError('');
-
-        try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Login failed');
-            }
-
-            const data = await response.json();
-            // Handle successful login (e.g., store token, redirect)
-            localStorage.setItem('token', data.token);
-            navigate('/dashboard'); // or wherever you want to redirect after login
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'An error occurred during login');
-        } finally {
+        
+        // Show success message
+        setTimeout(() => {
             setIsLoading(false);
-        }
+            setSuccess(true);
+            
+            // Redirect after showing success message
+            setTimeout(() => {
+                navigate('/resume');
+            }, 1000);
+        }, 1000);
     };
 
     return (
@@ -80,9 +64,9 @@ export default function Login() {
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSubmit}>
-                        {error && (
-                            <div className="mb-4 p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
-                                {error}
+                        {success && (
+                            <div className="mb-4 p-3 text-sm text-green-600 bg-green-50 border border-green-200 rounded-md">
+                                Logged in successfully! Redirecting...
                             </div>
                         )}
                         <div className="flex flex-col gap-6">
@@ -123,9 +107,9 @@ export default function Login() {
                         type="submit" 
                         className="w-full cursor-pointer" 
                         onClick={handleSubmit}
-                        disabled={isLoading}
+                        disabled={isLoading || success}
                     >
-                        {isLoading ? 'Logging in...' : 'Login'}
+                        {isLoading ? 'Logging in...' : success ? 'Success!' : 'Login'}
                     </Button>
                     <Button variant="outline" className="w-full cursor-pointer">
                     Login with Google

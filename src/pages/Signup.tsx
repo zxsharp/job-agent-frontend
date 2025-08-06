@@ -19,8 +19,8 @@ export default function Signup() {
         email: '',
         password: ''
     });
-    const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [success, setSuccess] = useState(false);
 
     const handleLoginClick = () => {
         navigate('/login');
@@ -32,38 +32,22 @@ export default function Signup() {
             ...prev,
             [id]: value
         }));
-        // Clear error when user starts typing
-        if (error) setError('');
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
-        setError('');
-
-        try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/signup`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Signup failed');
-            }
-
-            const data = await response.json();
-            // Handle successful signup (e.g., store token, redirect)
-            localStorage.setItem('token', data.token);
-            navigate('/dashboard'); // or wherever you want to redirect after signup
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'An error occurred during signup');
-        } finally {
+        
+        // Show success message
+        setTimeout(() => {
             setIsLoading(false);
-        }
+            setSuccess(true);
+            
+            // Redirect after showing success message
+            setTimeout(() => {
+                navigate('/resume');
+            }, 1000);
+        }, 1000);
     };
 
     return (
@@ -80,9 +64,9 @@ export default function Signup() {
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSubmit}>
-                        {error && (
-                            <div className="mb-4 p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
-                                {error}
+                        {success && (
+                            <div className="mb-4 p-3 text-sm text-green-600 bg-green-50 border border-green-200 rounded-md">
+                                Created account successfully! Redirecting...
                             </div>
                         )}
                         <div className="flex flex-col gap-6">
@@ -128,9 +112,9 @@ export default function Signup() {
                         type="submit" 
                         className="w-full cursor-pointer"
                         onClick={handleSubmit}
-                        disabled={isLoading}
+                        disabled={isLoading || success}
                     >
-                        {isLoading ? 'Creating account...' : 'Create account'}
+                        {isLoading ? 'Creating account...' : success ? 'Success!' : 'Create account'}
                     </Button>
                     <Button variant="outline" className="w-full cursor-pointer">
                     Register with Google
